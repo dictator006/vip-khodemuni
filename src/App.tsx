@@ -27,15 +27,7 @@ import {
   Activity,
   BarChart3,
   Flame,
-  Maximize2,
-  Globe,
-  Wifi,
-  Smartphone,
-  Copy,
-  ExternalLink,
-  ShieldAlert,
-  Server,
-  HelpCircle
+  Maximize2
 } from 'lucide-react';
 
 // تصویر بک‌آپ باکیفیت برداری SVG در صورت قطعی اینترنت بین‌الملل یا مسدود بودن هاست‌های عکس
@@ -944,17 +936,6 @@ export default function App() {
   // پاپ‌آپ مشاهده جزئیات محصول
   const [selectedProduct, setSelectedProduct] = useState<MenuItem | null>(null);
 
-  // مودال راهنمای باز شدن با آی‌پی و اینترنت ایران (بدون نیاز به فیلترشکن)
-  const [isIranGuideOpen, setIsIranGuideOpen] = useState<boolean>(false);
-  const [iranGuideTab, setIranGuideTab] = useState<'dns' | 'router' | 'domain'>('dns');
-  const [copiedKey, setCopiedKey] = useState<string>('');
-
-  const copyToClipboard = (key: string, text: string) => {
-    navigator.clipboard.writeText(text);
-    setCopiedKey(key);
-    setTimeout(() => setCopiedKey(''), 2000);
-  };
-
   // سیستم آمار بازدید واقعی سایت و آیتم‌ها (بدون ارقام فیک یا ساختگی)
   const [analytics, setAnalytics] = useState<AnalyticsData>(() => {
     const todayStr = new Date().toISOString().slice(0, 10);
@@ -1267,14 +1248,6 @@ export default function App() {
             </span>
           </div>
           <div className="flex items-center gap-2 mr-auto sm:mr-0">
-            <button
-              type="button"
-              onClick={() => setIsIranGuideOpen(true)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 transition text-[11px] sm:text-xs font-semibold cursor-pointer shadow-sm hover:scale-[1.02] active:scale-95"
-            >
-              <Globe className="w-3.5 h-3.5 text-emerald-400" />
-              <span>باز شدن با اینترنت ایران 🇮🇷</span>
-            </button>
             <a
               href="https://instagram.com/cafe_vip_khodemuni"
               target="_blank"
@@ -1632,15 +1605,6 @@ export default function App() {
                 <div className="flex items-center gap-2 self-end sm:self-center">
                   <button
                     type="button"
-                    onClick={() => setIsIranGuideOpen(true)}
-                    title="راهنمای باز شدن با اینترنت ایران، تنظیم مودم کافه و اتصال دامنه"
-                    className="px-3 py-2 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-xs text-emerald-300 border border-emerald-500/30 flex items-center gap-1.5 transition cursor-pointer"
-                  >
-                    <Globe className="w-3.5 h-3.5 text-emerald-400" />
-                    <span>رفع تحریم ایران 🇮🇷</span>
-                  </button>
-                  <button
-                    type="button"
                     onClick={handleResetAnalytics}
                     title="صفر کردن آمار بازدیدهای سایت"
                     className="px-3 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-xs text-zinc-300 flex items-center gap-1.5 transition cursor-pointer"
@@ -1948,293 +1912,6 @@ export default function App() {
                 بستن پنجره
               </button>
             </div>
-          </div>
-        </div>
-      )}
-      {/* ======================================================== */}
-      {/* مودال راهنمای باز شدن با آی‌پی و اینترنت ایران (بدون فیلترشکن) */}
-      {/* ======================================================== */}
-      {isIranGuideOpen && (
-        <div
-          className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-3 sm:p-5 animate-in fade-in duration-200"
-          onClick={() => setIsIranGuideOpen(false)}
-        >
-          <div
-            className="bg-zinc-900 border border-emerald-500/40 rounded-3xl p-5 sm:p-7 max-w-xl w-full relative shadow-card-deep animate-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* دکمه بستن */}
-            <button
-              onClick={() => setIsIranGuideOpen(false)}
-              className="absolute top-4 left-4 z-20 p-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-white transition cursor-pointer"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            {/* سربرگ مودال */}
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400 shrink-0">
-                <Globe className="w-6 h-6" />
-              </div>
-              <div>
-                <h3 className="text-lg sm:text-xl font-black text-white flex items-center gap-2">
-                  باز شدن منو با اینترنت ایران 🇮🇷
-                </h3>
-                <p className="text-xs text-zinc-400 mt-0.5">
-                  راهنمای رفع ارور ۴۰۳ گوگل و باز کردن منو بدون فیلترشکن
-                </p>
-              </div>
-            </div>
-
-            {/* توضیح علت */}
-            <div className="mb-5 p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/25 text-amber-200/90 text-xs leading-relaxed flex items-start gap-2.5">
-              <ShieldAlert className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-              <div>
-                <strong>چرا بدون فیلترشکن باز نمی‌شود؟</strong>
-                <p className="text-zinc-300 mt-1">
-                  سرورهای هاستینگ ابری گوگل (Google Cloud Run) به دلیل تحریم‌های شرکت گوگل، درخواست‌های مستقیم با آی‌پی ایران را با خطای ۴۰۳ مسدود می‌کنند. با راه‌حل‌های زیر بدون هیچ فیلترشکنی و با سرعت فوق‌العاده متصل شوید:
-                </p>
-              </div>
-            </div>
-
-            {/* سوئیچ تب‌ها */}
-            <div className="flex p-1 rounded-2xl bg-zinc-950 border border-zinc-800 mb-5 gap-1 text-xs font-bold">
-              <button
-                type="button"
-                onClick={() => setIranGuideTab('dns')}
-                className={`flex-1 py-2 rounded-xl flex items-center justify-center gap-1.5 transition cursor-pointer ${
-                  iranGuideTab === 'dns'
-                    ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
-                    : 'text-zinc-400 hover:text-zinc-200'
-                }`}
-              >
-                <Smartphone className="w-3.5 h-3.5" />
-                <span>دی‌ان‌اس ضدتحریم</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setIranGuideTab('router')}
-                className={`flex-1 py-2 rounded-xl flex items-center justify-center gap-1.5 transition cursor-pointer ${
-                  iranGuideTab === 'router'
-                    ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
-                    : 'text-zinc-400 hover:text-zinc-200'
-                }`}
-              >
-                <Wifi className="w-3.5 h-3.5" />
-                <span>مودم وای‌فای کافه</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setIranGuideTab('domain')}
-                className={`flex-1 py-2 rounded-xl flex items-center justify-center gap-1.5 transition cursor-pointer ${
-                  iranGuideTab === 'domain'
-                    ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/40'
-                    : 'text-zinc-400 hover:text-zinc-200'
-                }`}
-              >
-                <Server className="w-3.5 h-3.5" />
-                <span>دامنه کافه خودمونی</span>
-              </button>
-            </div>
-
-            {/* محتوای تب ۱: دی‌ان‌اس‌های ضدتحریم */}
-            {iranGuideTab === 'dns' && (
-              <div className="space-y-4">
-                <p className="text-xs text-zinc-300">
-                  کافیست یکی از دی‌ان‌اس‌های ایرانی زیر را روی گوشی یا کامپیوتر خود تنظیم کنید تا تمام تحریم‌های گوگل دور زده شوند:
-                </p>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {/* شکن */}
-                  <div className="p-3.5 rounded-2xl bg-zinc-950/80 border border-zinc-800">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-bold text-white flex items-center gap-1.5">
-                        <span className="w-2 h-2 rounded-full bg-emerald-400" />
-                        سامانه شکن (Shecan)
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => copyToClipboard('shecan', '178.22.122.100\n185.51.200.2')}
-                        className="text-[11px] text-emerald-400 hover:text-emerald-300 flex items-center gap-1 cursor-pointer"
-                      >
-                        {copiedKey === 'shecan' ? (
-                          <>
-                            <Check className="w-3 h-3" />
-                            <span>کپی شد!</span>
-                          </>
-                        ) : (
-                          <>
-                            <Copy className="w-3 h-3" />
-                            <span>کپی</span>
-                          </>
-                        )}
-                      </button>
-                    </div>
-                    <div className="space-y-1 font-mono text-xs text-zinc-300" dir="ltr">
-                      <div className="bg-zinc-900 px-2.5 py-1 rounded-lg">178.22.122.100</div>
-                      <div className="bg-zinc-900 px-2.5 py-1 rounded-lg">185.51.200.2</div>
-                    </div>
-                    <span className="text-[10px] text-zinc-500 mt-2 block">
-                      یا برای DoH اندروید: <code className="text-amber-300" dir="ltr">free.shecan.ir</code>
-                    </span>
-                  </div>
-
-                  {/* الکترو */}
-                  <div className="p-3.5 rounded-2xl bg-zinc-950/80 border border-zinc-800">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-bold text-white flex items-center gap-1.5">
-                        <span className="w-2 h-2 rounded-full bg-amber-400" />
-                        سامانه الکترو (Electro)
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => copyToClipboard('electro', '78.157.42.100\n78.157.42.101')}
-                        className="text-[11px] text-amber-400 hover:text-amber-300 flex items-center gap-1 cursor-pointer"
-                      >
-                        {copiedKey === 'electro' ? (
-                          <>
-                            <Check className="w-3 h-3" />
-                            <span>کپی شد!</span>
-                          </>
-                        ) : (
-                          <>
-                            <Copy className="w-3 h-3" />
-                            <span>کپی</span>
-                          </>
-                        )}
-                      </button>
-                    </div>
-                    <div className="space-y-1 font-mono text-xs text-zinc-300" dir="ltr">
-                      <div className="bg-zinc-900 px-2.5 py-1 rounded-lg">78.157.42.100</div>
-                      <div className="bg-zinc-900 px-2.5 py-1 rounded-lg">78.157.42.101</div>
-                    </div>
-                    <span className="text-[10px] text-zinc-500 mt-2 block">دارای اپلیکیشن رایگان برای گوشی</span>
-                  </div>
-
-                  {/* سامانه ۴۰۳ */}
-                  <div className="p-3.5 rounded-2xl bg-zinc-950/80 border border-zinc-800">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-bold text-white flex items-center gap-1.5">
-                        <span className="w-2 h-2 rounded-full bg-cyan-400" />
-                        سامانه ۴۰۳ (403.online)
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => copyToClipboard('403', '10.202.10.202\n10.202.10.102')}
-                        className="text-[11px] text-cyan-400 hover:text-cyan-300 flex items-center gap-1 cursor-pointer"
-                      >
-                        {copiedKey === '403' ? (
-                          <>
-                            <Check className="w-3 h-3" />
-                            <span>کپی شد!</span>
-                          </>
-                        ) : (
-                          <>
-                            <Copy className="w-3 h-3" />
-                            <span>کپی</span>
-                          </>
-                        )}
-                      </button>
-                    </div>
-                    <div className="space-y-1 font-mono text-xs text-zinc-300" dir="ltr">
-                      <div className="bg-zinc-900 px-2.5 py-1 rounded-lg">10.202.10.202</div>
-                      <div className="bg-zinc-900 px-2.5 py-1 rounded-lg">10.202.10.102</div>
-                    </div>
-                  </div>
-
-                  {/* بگذر */}
-                  <div className="p-3.5 rounded-2xl bg-zinc-950/80 border border-zinc-800">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-bold text-white flex items-center gap-1.5">
-                        <span className="w-2 h-2 rounded-full bg-rose-400" />
-                        سامانه بگذر (Begzar)
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => copyToClipboard('begzar', '185.55.226.26\n185.55.225.25')}
-                        className="text-[11px] text-rose-400 hover:text-rose-300 flex items-center gap-1 cursor-pointer"
-                      >
-                        {copiedKey === 'begzar' ? (
-                          <>
-                            <Check className="w-3 h-3" />
-                            <span>کپی شد!</span>
-                          </>
-                        ) : (
-                          <>
-                            <Copy className="w-3 h-3" />
-                            <span>کپی</span>
-                          </>
-                        )}
-                      </button>
-                    </div>
-                    <div className="space-y-1 font-mono text-xs text-zinc-300" dir="ltr">
-                      <div className="bg-zinc-900 px-2.5 py-1 rounded-lg">185.55.226.26</div>
-                      <div className="bg-zinc-900 px-2.5 py-1 rounded-lg">185.55.225.25</div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* راهنمای کوتاه اعمال روی گوشی */}
-                <div className="p-3.5 rounded-2xl bg-zinc-950/60 border border-zinc-800 text-[11px] text-zinc-400 space-y-1.5">
-                  <div className="font-bold text-zinc-200">روش تنظیم سریع در ۳۰ ثانیه:</div>
-                  <p>• <strong>گوشی اندروید:</strong> تنظیمات (Settings) ⟵ اتصالات (Connections) ⟵ دی‌ان‌اس خصوصی (Private DNS) ⟵ وارد کردن <code className="text-emerald-400 font-mono">free.shecan.ir</code></p>
-                  <p>• <strong>گوشی آیفون (iOS):</strong> تنظیمات Wi-Fi ⟵ لمس علامت (i) شبکه کافه ⟵ Configure DNS روی Manual ⟵ افزودن سرور <code className="text-emerald-400 font-mono">178.22.122.100</code></p>
-                </div>
-              </div>
-            )}
-
-            {/* محتوای تب ۲: تنظیم مودم کافه */}
-            {iranGuideTab === 'router' && (
-              <div className="space-y-4">
-                <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-200 text-xs leading-relaxed">
-                  <strong className="text-sm block mb-1 text-amber-300">⭐ توصیه طلایی برای کافه خودمونی:</strong>
-                  اگر دی‌ان‌اس را روی مودم وای‌فای کافه ست کنید، <strong>هیچ کدام از مشتریان و کارکنان نیاز به تنظیم گوشی یا فیلترشکن ندارند!</strong> هر کس به وای‌فای کافه وصل شود، منو بلافاصله با بالاترین سرعت برایش باز می‌شود.
-                </div>
-
-                <div className="space-y-2 text-xs text-zinc-300 bg-zinc-950/80 p-4 rounded-2xl border border-zinc-800">
-                  <h4 className="font-bold text-white mb-2">مراحل تنظیم ۳ دقیقه‌ای مودم کافه:</h4>
-                  <p>۱. مرورگر را باز کرده و به آدرس <code className="text-yellow-400 font-mono" dir="ltr">192.168.1.1</code> بروید.</p>
-                  <p>۲. نام کاربری و پسورد مودم را وارد کنید (معمولاً هر دو <code className="text-yellow-400 font-mono">admin</code> هستند).</p>
-                  <p>۳. به بخش <strong>Network</strong> یا <strong>LAN</strong> یا <strong>DHCP Server</strong> بروید.</p>
-                  <p>۴. در فیلد <strong>Primary DNS</strong> عدد <code className="text-emerald-400 font-mono" dir="ltr">178.22.122.100</code> و در فیلد <strong>Secondary DNS</strong> عدد <code className="text-emerald-400 font-mono" dir="ltr">185.51.200.2</code> را وارد و ذخیره (Save/Apply) کنید.</p>
-                  <p>۵. یک‌بار مودم را خاموش و روشن کنید. از این لحظه تمام میزها با اتصال به وای‌فای بدون تحریم هستند.</p>
-                </div>
-              </div>
-            )}
-
-            {/* محتوای تب ۳: اتصال دامنه اختصاصی */}
-            {iranGuideTab === 'domain' && (
-              <div className="space-y-4">
-                <div className="p-4 rounded-2xl bg-yellow-500/10 border border-yellow-500/30 text-zinc-200 text-xs leading-relaxed">
-                  <strong className="text-sm block mb-1 text-yellow-300">🌐 راه‌حل دائمی و خودکار بدون نیاز به وای‌فای:</strong>
-                  برای اینکه حتی مشتریانی که از اینترنت سیم‌کارت همراه اول و ایرانسل استفاده می‌کنند مستقیماً منو را باز کنند:
-                </div>
-
-                <div className="space-y-3 text-xs text-zinc-300">
-                  <div className="p-3.5 rounded-2xl bg-zinc-950/80 border border-zinc-800">
-                    <span className="font-bold text-white block mb-1">روش اول: اتصال دامنه با کلودفلر (Cloudflare CDN)</span>
-                    <p className="text-zinc-400 leading-relaxed">
-                      خرید یک دامنه ایرانی ارزان (مانند <code className="text-amber-300">cafekhodemuni.ir</code> سالانه حدود ۳۵ هزار تومان) و اتصال رایگان به Cloudflare. چون پروکسی کلودفلر فعال می‌شود، سرور گوگل آی‌پی کاربر را آمریکا یا اروپا می‌بیند و ارور ۴۰۳ رخ نمی‌دهد.
-                    </p>
-                  </div>
-
-                  <div className="p-3.5 rounded-2xl bg-zinc-950/80 border border-zinc-800">
-                    <span className="font-bold text-white block mb-1">روش دوم: آپلود روی هاست‌های داخلی ایران یا Vercel</span>
-                    <p className="text-zinc-400 leading-relaxed">
-                      این پروژه از React و Vite استفاده می‌کند. با دستور <code className="text-yellow-400 font-mono">npm run build</code>، کل فایل‌های منو در پوشه <code className="text-yellow-400 font-mono">dist</code> آماده می‌شوند که می‌توانید آن را روی هاست‌های ایرانی (مثل ابر آروان یا پارس‌پک) یا Vercel آپلود کنید که هیچ تحریمی روی آی‌پی ایران ندارند.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            <button
-              type="button"
-              onClick={() => setIsIranGuideOpen(false)}
-              className="w-full mt-6 py-3 rounded-2xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-bold text-sm transition cursor-pointer"
-            >
-              متوجه شدم و بستن راهنما
-            </button>
           </div>
         </div>
       )}
