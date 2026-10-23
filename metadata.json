@@ -1,0 +1,8 @@
+{
+  "name": "کافه خودمونی | VIP Khodemuni - منوی آنلاین",
+  "description": "منوی دیجیتال و آنلاین کافه و کافی‌شاپ خودمونی شامل سرویس‌های قلیان، بار سرد، بار گرم، شیک، ماکتل و اسموتی همراه با پنل مدیریت و آمار بازدید.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

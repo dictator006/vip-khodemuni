@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>منوی دیجیتال کافه رستوران لوکس | Luxury 3D Menu</title>
+  
+  <!-- فونت وزیرمتن -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- QRCode.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <!-- پیکربندی پالت رنگی دارک لوکس طلایی -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Vazirmatn', 'sans-serif'],
+          },
+          colors: {
+            obsidian: '#08080a',
+            charcoal: '#111216',
+            cardBg: 'rgba(22, 24, 30, 0.75)',
+            gold: {
+              300: '#fef08a',
+              400: '#facc15',
+              500: '#eab308',
+              600: '#ca8a04',
+              chrome: 'linear-gradient(135deg, #FFF6D5 0%, #D4AF37 50%, #AA771C 100%)'
+            }
+          },
+          boxShadow: {
+            '3d-glow': '0 20px 40px -15px rgba(234, 179, 8, 0.25)',
+            'card-deep': '0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 1px 1px rgba(255, 215, 0, 0.1)',
+            'neon-gold': '0 0 25px rgba(234, 179, 8, 0.45)',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* استایل‌های پرسپکتیو و تعامل سه‌بعدی */
+    body {
+      background-color: #08080a;
+      perspective: 1200px;
+      overflow-x: hidden;
+    }
+
+    .perspective-container {
+      perspective: 1000px;
+    }
+
+    /* کارت 3D تعاملی با حفظ فضای سه‌بعدی */
+    .card-3d {
+      transform-style: preserve-3d;
+      transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease;
+      will-change: transform;
+    }
+
+    .card-3d:hover {
+      box-shadow: 0 30px 60px -12px rgba(234, 179, 8, 0.3), 0 0 0 1px rgba(234, 179, 8, 0.4);
+    }
+
+    .translate-z-badge {
+      transform: translateZ(40px);
+    }
+
+    .translate-z-img {
+      transform: translateZ(50px) scale(1.02);
+      filter: drop-shadow(0 20px 25px rgba(0,0,0,0.8));
+      transition: transform 0.3s ease;
+    }
+
+    .card-3d:hover .translate-z-img {
+      transform: translateZ(65px) scale(1.06);
+    }
+
+    .translate-z-text {
+      transform: translateZ(30px);
+    }
+
+    .translate-z-btn {
+      transform: translateZ(45px);
+    }
+
+    /* بازتاب نور شیشه‌ای سه‌بعدی (Sheen Effect) */
+    .shine-glare {
+      position: absolute;
+      inset: 0;
+      border-radius: 1.5rem;
+      background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.18), transparent 60%);
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+      z-index: 20;
+    }
+
+    .card-3d:hover .shine-glare {
+      opacity: 1;
+    }
+
+    /* انیمیشن پالس شناور نئونی طلایی */
+    @keyframes floatOrb {
+      0%, 100% { transform: translateY(0px) scale(1); }
+      50% { transform: translateY(-20px) scale(1.08); }
+    }
+
+    .animate-orb {
+      animation: floatOrb 9s ease-in-out infinite;
+    }
+
+    /* اسکرول‌بار ظریف تیره */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #08080a;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #27272a;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #ca8a04;
+    }
+
+    /* دکمه اکشن متالیک کروم طلایی */
+    .btn-gold-3d {
+      background: linear-gradient(135deg, #FFE27D 0%, #D4AF37 45%, #996515 100%);
+      box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.6);
+      transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .btn-gold-3d:hover {
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 8px 25px rgba(212, 175, 55, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.8);
+    }
+    .btn-gold-3d:active {
+      transform: translateY(1px) scale(0.98);
+    }
+  </style>
+</head>
+
+<body class="text-zinc-200 min-h-screen relative selection:bg-yellow-500 selection:text-black">
+
+  <!-- پس‌زمینه آمبیانت با اورب‌های نورانی سه بعدی -->
+  <div class="fixed inset-0 pointer-events-none overflow-hidden z-0">
+    <div class="absolute -top-32 right-1/4 w-96 h-96 bg-amber-500/10 rounded-full blur-[140px] animate-orb"></div>
+    <div class="absolute top-1/2 -left-32 w-80 h-80 bg-yellow-600/10 rounded-full blur-[130px] animate-orb" style="animation-delay: -4s;"></div>
+    <div class="absolute -bottom-32 right-1/3 w-96 h-96 bg-amber-700/10 rounded-full blur-[150px] animate-orb" style="animation-delay: -2s;"></div>
+    <!-- پترن شبکه فضایی متالیک -->
+    <div class="absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.03)_1px,transparent_1px)] [background-size:28px_28px] opacity-70"></div>
+  </div>
+
+  <div class="relative z-10 max-w-6xl mx-auto px-4 py-6 sm:py-10">
+
+    <!-- نوار هدر برندینگ سه بعدی و ابزارها -->
+    <header class="flex flex-col md:flex-row items-center justify-between gap-6 mb-12 p-6 rounded-3xl bg-zinc-900/60 backdrop-blur-2xl border border-zinc-800/80 shadow-2xl">
+      <div class="flex items-center gap-4">
+        <!-- لوگوی سه‌بعدی لوکس با انعکاس نوری -->
+        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-yellow-300 via-amber-500 to-yellow-800 p-[1.5px] shadow-3d-glow">
+          <div class="w-full h-full bg-zinc-950 rounded-[14px] flex items-center justify-center">
+            <i data-lucide="sparkles" class="w-8 h-8 text-yellow-400"></i>
+          </div>
+        </div>
+        <div>
+          <h1 class="text-2xl sm:text-3xl font-black tracking-tight bg-gradient-to-r from-amber-100 via-amber-300 to-yellow-500 bg-clip-text text-transparent">
+            کافه رستوران لورنس
+          </h1>
+          <p class="text-xs sm:text-sm text-zinc-400 flex items-center gap-2 mt-1">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            منوی آنلاین سه‌بعدی اختصاصی • به‌روزرسانی زنده
+          </p>
+        </div>
+      </div>
+
+      <!-- دکمه‌های اکشن سریع هدر -->
+      <div class="flex items-center gap-3 w-full md:w-auto justify-end">
+        <button onclick="toggleQrModal()" class="px-4 py-2.5 rounded-2xl bg-zinc-800/80 hover:bg-zinc-700/80 border border-zinc-700 text-sm font-semibold flex items-center gap-2 transition-all hover:scale-105 active:scale-95 shadow-lg">
+          <i data-lucide="qr-code" class="w-4 h-4 text-yellow-400"></i>
+          <span>بارکد میز</span>
+        </button>
+        <button onclick="toggleAdminPanel()" class="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-zinc-800 to-zinc-900 hover:from-zinc-700 hover:to-zinc-800 border border-amber-500/30 text-yellow-300 text-sm font-semibold flex items-center gap-2 transition-all hover:scale-105 active:scale-95 shadow-lg">
+          <i data-lucide="sliders-horizontal" class="w-4 h-4"></i>
+          <span>پنل مدیریت</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- پنل ادمین (Modal / Slide-down) -->
+    <div id="adminPanel" class="hidden mb-10 p-6 rounded-3xl bg-zinc-900/90 border border-yellow-500/40 backdrop-blur-xl shadow-card-deep">
+      <div class="flex items-center justify-between pb-4 border-b border-zinc-800 mb-6">
+        <div class="flex items-center gap-2">
+          <i data-lucide="edit-3" class="w-5 h-5 text-yellow-400"></i>
+          <h3 class="text-lg font-bold text-white">مدیریت سریع آیتم‌ها و قیمت‌ها</h3>
+        </div>
+        <button onclick="toggleAdminPanel()" class="text-zinc-400 hover:text-white p-1 rounded-lg">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form id="itemForm" onsubmit="handleSaveItem(event)" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <input type="hidden" id="editItemId">
+        <div>
+          <label class="block text-xs text-zinc-400 mb-1">نام محصول</label>
+          <input type="text" id="itemName" required placeholder="مثال: کارامل ماکیاتو سه‌بعدی" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-sm focus:border-yellow-500 outline-none">
+        </div>
+        <div>
+          <label class="block text-xs text-zinc-400 mb-1">دسته‌بندی</label>
+          <select id="itemCategory" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-sm focus:border-yellow-500 outline-none">
+            <option value="hot-coffee">قهوه‌های دمی و اسپرسو</option>
+            <option value="cold-drinks">ماکتیل و بار سرد</option>
+            <option value="dessert">کیک و دسرهای دست‌ساز</option>
+            <option value="food">میان‌وعده و غذای سرآشپز</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs text-zinc-400 mb-1">قیمت (تومان)</label>
+          <input type="number" id="itemPrice" required placeholder="مثال: 145000" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-sm focus:border-yellow-500 outline-none">
+        </div>
+        <div class="sm:col-span-2">
+          <label class="block text-xs text-zinc-400 mb-1">آدرس عکس آیتم (URL)</label>
+          <input type="url" id="itemImage" required placeholder="https://images.unsplash.com/..." class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-sm focus:border-yellow-500 outline-none">
+        </div>
+        <div>
+          <label class="block text-xs text-zinc-400 mb-1">برچسب ویژگی</label>
+          <select id="itemTag" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-sm focus:border-yellow-500 outline-none">
+            <option value="popular">محبوب‌ترین 🔥</option>
+            <option value="special">پیشنهاد باریستا ⭐</option>
+            <option value="vegan">گیاهی وگان 🌱</option>
+            <option value="none">بدون نشان</option>
+          </select>
+        </div>
+        <div class="sm:col-span-3">
+          <label class="block text-xs text-zinc-400 mb-1">ترکیبات و توضیحات مزه</label>
+          <input type="text" id="itemDesc" required placeholder="مثال: اسپرسو دوبل، شیر بافت‌دار، سس کارامل شور خانگی" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-3 py-2 text-sm focus:border-yellow-500 outline-none">
+        </div>
+        <div class="sm:col-span-3 flex justify-end gap-3 mt-2">
+          <button type="button" onclick="resetForm()" class="px-5 py-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-sm">پاک کردن فرم</button>
+          <button type="submit" class="btn-gold-3d px-6 py-2 rounded-xl text-zinc-950 font-bold text-sm">ذخیره آیتم در منو</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- نوار جستجو و اکشن فیلترها -->
+    <div class="flex flex-col sm:flex-row items-center gap-4 mb-8">
+      <div class="relative w-full sm:w-80">
+        <i data-lucide="search" class="w-5 h-5 absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500"></i>
+        <input type="text" id="searchInput" oninput="handleSearch(this.value)" placeholder="جستجوی طعم یا محصول..." class="w-full bg-zinc-900/80 border border-zinc-800/80 rounded-2xl pr-12 pl-4 py-3 text-sm focus:border-yellow-500 focus:shadow-3d-glow outline-none backdrop-blur-md transition-all">
+      </div>
+
+      <!-- تب‌های دسته‌بندی با افکت متالیک -->
+      <div class="flex items-center gap-2 overflow-x-auto w-full pb-2 sm:pb-0 no-scrollbar">
+        <button onclick="setCategory('all')" class="cat-btn active px-5 py-2.5 rounded-2xl bg-zinc-800 text-zinc-300 hover:text-white border border-zinc-700/60 text-xs sm:text-sm font-semibold whitespace-nowrap transition-all shadow-md" data-category="all">
+          همه آیتم‌ها
+        </button>
+        <button onclick="setCategory('hot-coffee')" class="cat-btn px-5 py-2.5 rounded-2xl bg-zinc-900/80 text-zinc-400 hover:text-white border border-zinc-800 text-xs sm:text-sm font-semibold whitespace-nowrap transition-all" data-category="hot-coffee">
+          ☕ قهوه گرم
+        </button>
+        <button onclick="setCategory('cold-drinks')" class="cat-btn px-5 py-2.5 rounded-2xl bg-zinc-900/80 text-zinc-400 hover:text-white border border-zinc-800 text-xs sm:text-sm font-semibold whitespace-nowrap transition-all" data-category="cold-drinks">
+          🍹 بار سرد و ماکتیل
+        </button>
+        <button onclick="setCategory('dessert')" class="cat-btn px-5 py-2.5 rounded-2xl bg-zinc-900/80 text-zinc-400 hover:text-white border border-zinc-800 text-xs sm:text-sm font-semibold whitespace-nowrap transition-all" data-category="dessert">
+          🍰 کیک و دسر
+        </button>
+        <button onclick="setCategory('food')" class="cat-btn px-5 py-2.5 rounded-2xl bg-zinc-900/80 text-zinc-400 hover:text-white border border-zinc-800 text-xs sm:text-sm font-semibold whitespace-nowrap transition-all" data-category="food">
+          🥑 میان‌وعده و خوراک
+        </button>
+      </div>
+    </div>
+
+    <!-- شبکه کارت‌های سه‌بعدی منو (3D Interactive Grid) -->
+    <div id="menuGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 perspective-container">
+      <!-- کارت‌ها با جاوااسکریپت رندر می‌شوند -->
+    </div>
+
+    <!-- وضعیت خالی بودن سرچ -->
+    <div id="emptyState" class="hidden text-center py-20">
+      <i data-lucide="coffee" class="w-16 h-16 text-zinc-600 mx-auto mb-4 animate-bounce"></i>
+      <h3 class="text-lg font-bold text-zinc-400">محصولی با این مشخصات یافت نشد!</h3>
+      <p class="text-sm text-zinc-600 mt-1">عنوان جستجو یا دسته‌بندی را تغییر دهید.</p>
+    </div>
+
+    <!-- نوار شناور سبد فاکتور مشتری سه‌بعدی -->
+    <div id="cartBar" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 w-[92%] max-w-xl bg-zinc-900/90 border border-yellow-500/40 rounded-3xl p-4 backdrop-blur-2xl shadow-card-deep flex items-center justify-between transition-all transform duration-300 translate-y-28 opacity-0">
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-2xl bg-yellow-500/20 border border-yellow-500/40 flex items-center justify-center text-yellow-400 font-black text-lg" id="cartCount">
+          0
+        </div>
+        <div>
+          <div class="text-xs text-zinc-400">جمع فاکتور انتخابی شما:</div>
+          <div class="text-lg font-black text-yellow-400" id="cartTotal">۰ تومان</div>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="clearCart()" class="px-3 py-2 text-xs text-zinc-400 hover:text-rose-400 transition">پاک کردن</button>
+        <button onclick="alert('فاکتور شما با موفقیت محاسبه شد. سفارش را به سالن‌دار اطلاع دهید.')" class="btn-gold-3d px-5 py-2.5 rounded-2xl text-zinc-950 font-bold text-xs sm:text-sm flex items-center gap-1.5">
+          <span>تأیید سفارش</span>
+          <i data-lucide="check" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- مودال بارکد QR سه‌بعدی برای میزها -->
+  <div id="qrModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
+    <div class="bg-zinc-900 border border-yellow-500/30 rounded-3xl p-8 max-w-sm w-full text-center relative shadow-card-deep">
+      <button onclick="toggleQrModal()" class="absolute top-4 left-4 text-zinc-400 hover:text-white">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+      <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-yellow-500/10 border border-yellow-500/30 flex items-center justify-center text-yellow-400">
+        <i data-lucide="qr-code" class="w-8 h-8"></i>
+      </div>
+      <h3 class="text-xl font-black text-white mb-2">بارکد هوشمند میز</h3>
+      <p class="text-xs text-zinc-400 mb-6">این بارکد را اسکن کنید یا آن را برای چاپ بر روی استند میز کافه ذخیره نمایید.</p>
+      
+      <div class="p-4 bg-white rounded-2xl inline-block mx-auto mb-6 shadow-inner" id="qrcode"></div>
+
+      <div class="flex flex-col gap-2">
+        <button onclick="copyCurrentLink()" id="copyLinkBtn" class="w-full py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-xs font-semibold text-zinc-300 flex items-center justify-center gap-2 transition">
+          <i data-lucide="copy" class="w-4 h-4"></i>
+          <span>کپی کردن آدرس منو</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- اسکریپت منطق و سه‌بعدی‌ساز تعاملی منو -->
+  <script>
+    // پایگاه داده پیش‌فرض محصولات با تم لوکس
+    const initialItems = [
+      {
+        id: '1',
+        name: 'اسپرسو سینگل اوریجین اتیوپی',
+        category: 'hot-coffee',
+        price: 95000,
+        tag: 'special',
+        image: 'https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?auto=format&fit=crop&w=600&q=80',
+        desc: 'اسیدتی شفاف، نت‌های میوه‌ای گلی، کرمای غلیظ با طعم یاد تمشک و شکلات تلخ',
+        available: true
+      },
+      {
+        id: '2',
+        name: 'اسپانیش لاته زعفرانی ۳D',
+        category: 'hot-coffee',
+        price: 145000,
+        tag: 'popular',
+        image: 'https://images.unsplash.com/photo-1534778101976-62847782c213?auto=format&fit=crop&w=600&q=80',
+        desc: 'اسپرسو رست تازه، شیر غلیظ شده دست‌ساز همراه با عصاره زعفران قائنات و هل',
+        available: true
+      },
+      {
+        id: '3',
+        name: 'بلو لاگون کروم ماکتیل',
+        category: 'cold-drinks',
+        price: 135000,
+        tag: 'popular',
+        image: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=600&q=80',
+        desc: 'سیروپ کوراسائو بلو، لیمو ترش تاره شیرازی، سودا، یخ دودی و کف مخملی نعنا',
+        available: true
+      },
+      {
+        id: '4',
+        name: 'آیس دراگون وگن بری',
+        category: 'cold-drinks',
+        price: 155000,
+        tag: 'vegan',
+        image: 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=600&q=80',
+        desc: 'پوره دراگون فروت طبیعی، شیر بادام شیرین نشده، کرنبری و چیاسید ارگانیک',
+        available: true
+      },
+      {
+        id: '5',
+        name: 'چیزکیک سن سباستین طلا',
+        category: 'dessert',
+        price: 175000,
+        tag: 'special',
+        image: 'https://images.unsplash.com/photo-1508737027454-e6454ef45afd?auto=format&fit=crop&w=600&q=80',
+        desc: 'بافت کرمی کاراملی شده با مرکز ذوب شونده همراه با سس بلژیکی گرم و ورق طلای خوراکی',
+        available: true
+      },
+      {
+        id: '6',
+        name: 'تارت دارک چاکلت و نمک دریا',
+        category: 'dessert',
+        price: 160000,
+        tag: 'none',
+        image: 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=600&q=80',
+        desc: 'گاناش شکلات تلخ ۷۴ درصد گانایی، کراست کره فرانسوی و فلیک‌های نمک مالدون',
+        available: true
+      },
+      {
+        id: '7',
+        name: 'تست آووکادو و تخم‌مرغ پوچد',
+        category: 'food',
+        price: 210000,
+        tag: 'special',
+        image: 'https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=600&q=80',
+        desc: 'نان ساوردو تازه برشته، کرم آووکادو، تخم‌مرغ پوچد با زرده روان و پاپریکای دودی',
+        available: true
+      }
+    ];
+
+    let items = JSON.parse(localStorage.getItem('luxury_menu_items')) || initialItems;
+    let activeCategory = 'all';
+    let searchQuery = '';
+    let cart = {};
+
+    function saveToStorage() {
+      localStorage.setItem('luxury_menu_items', JSON.stringify(items));
+    }
+
+    function formatNumber(num) {
+      return new Intl.NumberFormat('fa-IR').format(num);
+    }
+
+    // رندر کارت‌ها با ساختار سه‌بعدی لایه‌بندی شده
+    function renderMenu() {
+      const grid = document.getElementById('menuGrid');
+      const emptyState = document.getElementById('emptyState');
+      grid.innerHTML = '';
+
+      const filtered = items.filter(item => {
+        const matchesCategory = activeCategory === 'all' || item.category === activeCategory;
+        const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                              item.desc.toLowerCase().includes(searchQuery.toLowerCase());
+        return matchesCategory && matchesSearch;
+      });
+
+      if (filtered.length === 0) {
+        emptyState.classList.remove('hidden');
+      } else {
+        emptyState.classList.add('hidden');
+      }
+
+      filtered.forEach(item => {
+        const card = document.createElement('div');
+        card.className = "card-3d relative rounded-3xl bg-zinc-900/80 border border-zinc-800/90 p-5 flex flex-col justify-between overflow-hidden backdrop-blur-xl group cursor-pointer shadow-card-deep";
+        card.setAttribute('data-id', item.id);
+
+        let tagBadge = '';
+        if (item.tag === 'special') {
+          tagBadge = `<span class="translate-z-badge px-3 py-1 rounded-full text-[11px] font-bold bg-amber-500/20 text-yellow-300 border border-amber-500/40">پیشنهاد سرآشپز ⭐</span>`;
+        } else if (item.tag === 'popular') {
+          tagBadge = `<span class="translate-z-badge px-3 py-1 rounded-full text-[11px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/40">محبوب‌ترین 🔥</span>`;
+        } else if (item.tag === 'vegan') {
+          tagBadge = `<span class="translate-z-badge px-3 py-1 rounded-full text-[11px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">گیاهی 🌱</span>`;
+        }
+
+        const countInCart = cart[item.id] || 0;
+
+        card.innerHTML = `
+          <div class="shine-glare"></div>
+          
+          <!-- لایه تصویر سه‌بعدی با عمق بالا -->
+          <div class="relative w-full h-52 rounded-2xl overflow-hidden mb-5 bg-zinc-950/60 shadow-2xl">
+            <img src="${item.image}" alt="${item.name}" loading="lazy" class="translate-z-img w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-transparent opacity-80"></div>
+            
+            <div class="absolute top-3 right-3 z-30">
+              ${tagBadge}
+            </div>
+
+            <!-- دکمه‌های کنترل سریع برای ادمین -->
+            <div class="absolute top-3 left-3 z-30 flex gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+              <button onclick="editItem('${item.id}', event)" class="p-2 rounded-xl bg-zinc-900/90 hover:bg-zinc-800 text-yellow-400 border border-zinc-700 shadow-md">
+                <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
+              </button>
+              <button onclick="deleteItem('${item.id}', event)" class="p-2 rounded-xl bg-zinc-900/90 hover:bg-rose-900/80 text-rose-400 border border-zinc-700 shadow-md">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+
+            ${!item.available ? `
+              <div class="absolute inset-0 bg-black/80 backdrop-blur-sm z-20 flex items-center justify-center">
+                <span class="px-4 py-1.5 rounded-full bg-zinc-800 text-zinc-300 text-xs font-bold border border-zinc-600">اتمام موجودی</span>
+              </div>
+            ` : ''}
+          </div>
+
+          <!-- لایه متن سه‌بعدی -->
+          <div class="translate-z-text flex-1">
+            <div class="flex items-start justify-between gap-2 mb-2">
+              <h3 class="text-base font-extrabold text-white group-hover:text-yellow-400 transition-colors">
+                ${item.name}
+              </h3>
+            </div>
+            <p class="text-xs text-zinc-400 line-clamp-2 leading-relaxed mb-4 font-normal">
+              ${item.desc}
+            </p>
+          </div>
+
+          <!-- بخش قیمت و اکشن اضافه به فاکتور سه‌بعدی -->
+          <div class="translate-z-btn pt-4 border-t border-zinc-800/80 flex items-center justify-between mt-auto">
+            <div>
+              <span class="text-[10px] text-zinc-400 block font-normal">قیمت ویژه:</span>
+              <span class="text-base font-black text-amber-400 tracking-tight">
+                ${formatNumber(item.price)} <span class="text-xs text-zinc-300 font-normal">تومان</span>
+              </span>
+            </div>
+
+            ${item.available ? `
+              <div class="flex items-center gap-1.5" onclick="event.stopPropagation()">
+                ${countInCart > 0 ? `
+                  <button onclick="changeCart('${item.id}', -1)" class="w-8 h-8 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white flex items-center justify-center font-bold text-sm shadow">-</button>
+                  <span class="w-6 text-center font-bold text-yellow-400 text-sm">${countInCart}</span>
+                ` : ''}
+                <button onclick="changeCart('${item.id}', 1)" class="btn-gold-3d px-3.5 py-2 rounded-xl text-zinc-950 font-bold text-xs flex items-center gap-1">
+                  <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                  <span>${countInCart > 0 ? 'افزودن' : 'سفارش'}</span>
+                </button>
+              </div>
+            ` : `
+              <span class="text-xs text-zinc-500 font-medium">ناموجود</span>
+            `}
+          </div>
+        `;
+
+        // رویداد رهگیری ماوس برای افکت تعاملی سه‌بعدی Tilt
+        attach3DEffect(card);
+        grid.appendChild(card);
+      });
+
+      lucide.createIcons();
+      updateCartBar();
+    }
+
+    // موتور فیزیک سه‌بعدی Tilt با محور ماوس
+    function attach3DEffect(card) {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        
+        // محاسبه شیب پرسپکتیو با زاویه ملایم و دقیق
+        const rotateX = ((y - centerY) / centerY) * -12;
+        const rotateY = ((x - centerX) / centerX) * 12;
+
+        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-8px)`;
+        card.style.setProperty('--mouse-x', `${(x / rect.width) * 100}%`);
+        card.style.setProperty('--mouse-y', `${(y / rect.height) * 100}%`);
+      });
+
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(0px)';
+      });
+    }
+
+    // مدیریت سبد فاکتور
+    function changeCart(id, delta) {
+      if (!cart[id]) cart[id] = 0;
+      cart[id] += delta;
+      if (cart[id] <= 0) delete cart[id];
+      renderMenu();
+    }
+
+    function clearCart() {
+      cart = {};
+      renderMenu();
+    }
+
+    function updateCartBar() {
+      const cartBar = document.getElementById('cartBar');
+      const cartCount = document.getElementById('cartCount');
+      const cartTotal = document.getElementById('cartTotal');
+
+      const totalItems = Object.values(cart).reduce((a, b) => a + b, 0);
+      let totalPrice = 0;
+
+      for (const [id, count] of Object.entries(cart)) {
+        const item = items.find(i => i.id === id);
+        if (item) totalPrice += item.price * count;
+      }
+
+      if (totalItems > 0) {
+        cartCount.textContent = totalItems;
+        cartTotal.textContent = `${formatNumber(totalPrice)} تومان`;
+        cartBar.classList.remove('translate-y-28', 'opacity-0');
+        cartBar.classList.add('translate-y-0', 'opacity-100');
+      } else {
+        cartBar.classList.add('translate-y-28', 'opacity-0');
+        cartBar.classList.remove('translate-y-0', 'opacity-100');
+      }
+    }
+
+    // فیلتر دسته‌بندی و سرچ
+    function setCategory(cat) {
+      activeCategory = cat;
+      document.querySelectorAll('.cat-btn').forEach(btn => {
+        if (btn.getAttribute('data-category') === cat) {
+          btn.className = "cat-btn px-5 py-2.5 rounded-2xl bg-amber-500/20 text-yellow-300 border border-yellow-500/50 text-xs sm:text-sm font-bold shadow-3d-glow whitespace-nowrap transition-all";
+        } else {
+          btn.className = "cat-btn px-5 py-2.5 rounded-2xl bg-zinc-900/80 text-zinc-400 hover:text-white border border-zinc-800 text-xs sm:text-sm font-semibold whitespace-nowrap transition-all";
+        }
+      });
+      renderMenu();
+    }
+
+    function handleSearch(val) {
+      searchQuery = val;
+      renderMenu();
+    }
+
+    // پنل مدیریت و عملیات افزودن / ویرایش
+    function toggleAdminPanel() {
+      const panel = document.getElementById('adminPanel');
+      panel.classList.toggle('hidden');
+    }
+
+    function resetForm() {
+      document.getElementById('editItemId').value = '';
+      document.getElementById('itemForm').reset();
+    }
+
+    function handleSaveItem(e) {
+      e.preventDefault();
+      const id = document.getElementById('editItemId').value;
+      const name = document.getElementById('itemName').value;
+      const category = document.getElementById('itemCategory').value;
+      const price = Number(document.getElementById('itemPrice').value);
+      const image = document.getElementById('itemImage').value;
+      const tag = document.getElementById('itemTag').value;
+      const desc = document.getElementById('itemDesc').value;
+
+      if (id) {
+        // آپدیت آیتم قبلی
+        const index = items.findIndex(i => i.id === id);
+        if (index !== -1) {
+          items[index] = { ...items[index], name, category, price, image, tag, desc };
+        }
+      } else {
+        // ایجاد آیتم تازه
+        const newItem = {
+          id: Date.now().toString(),
+          name,
+          category,
+          price,
+          image,
+          tag,
+          desc,
+          available: true
+        };
+        items.unshift(newItem);
+      }
+
+      saveToStorage();
+      resetForm();
+      toggleAdminPanel();
+      renderMenu();
+    }
+
+    function editItem(id, e) {
+      e.stopPropagation();
+      const item = items.find(i => i.id === id);
+      if (!item) return;
+
+      document.getElementById('editItemId').value = item.id;
+      document.getElementById('itemName').value = item.name;
+      document.getElementById('itemCategory').value = item.category;
+      document.getElementById('itemPrice').value = item.price;
+      document.getElementById('itemImage').value = item.image;
+      document.getElementById('itemTag').value = item.tag;
+      document.getElementById('itemDesc').value = item.desc;
+
+      const panel = document.getElementById('adminPanel');
+      if (panel.classList.contains('hidden')) {
+        toggleAdminPanel();
+      }
+      window.scrollTo({ top: panel.offsetTop - 40, behavior: 'smooth' });
+    }
+
+    function deleteItem(id, e) {
+      e.stopPropagation();
+      if (confirm('آیا از حذف این آیتم از منو مطمئن هستید؟')) {
+        items = items.filter(i => i.id !== id);
+        delete cart[id];
+        saveToStorage();
+        renderMenu();
+      }
+    }
+
+    // بارکد QR اختصاصی میز
+    function toggleQrModal() {
+      const modal = document.getElementById('qrModal');
+      modal.classList.toggle('hidden');
+      if (!modal.classList.contains('hidden')) {
+        const qrContainer = document.getElementById('qrcode');
+        qrContainer.innerHTML = '';
+        new QRCode(qrContainer, {
+          text: window.location.href,
+          width: 170,
+          height: 170,
+          colorDark: "#08080a",
+          colorLight: "#ffffff",
+          correctLevel: QRCode.CorrectLevel.H
+        });
+      }
+    }
+
+    function copyCurrentLink() {
+      navigator.clipboard.writeText(window.location.href);
+      const btn = document.getElementById('copyLinkBtn');
+      btn.innerHTML = `<i data-lucide="check" class="w-4 h-4 text-emerald-400"></i><span class="text-emerald-400">لینک کپی شد!</span>`;
+      lucide.createIcons();
+      setTimeout(() => {
+        btn.innerHTML = `<i data-lucide="copy" class="w-4 h-4"></i><span>کپی کردن آدرس منو</span>`;
+        lucide.createIcons();
+      }, 2500);
+    }
+
+    // راه‌اندازی اولیه
+    document.addEventListener('DOMContentLoaded', () => {
+      renderMenu();
+    });
+  </script>
+</body>
+</html>
