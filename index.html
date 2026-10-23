@@ -9,17 +9,93 @@
     <meta property="og:description" content="منوی دیجیتال و آنلاین کافه و کافی‌شاپ خودمونی شامل سرویس‌های قلیان، بار سرد، بار گرم، شیک، ماکتل و اسموتی همراه با پنل مدیریت و آمار بازدید." />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
-    <!-- فونت وزیرمتن با لود غیرمسدودکننده برای دسترسی بدون معطلی در اینترنت ایران -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap" media="print" onload="this.media='all'">
-    <noscript>
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap">
-    </noscript>
+    <!-- فونت‌های سیستمی فوق‌سریع فارسی بدون وابستگی به سرورهای خارجی (لود در ۰ ثانیه) -->
+    <style>
+      /* استایل‌های اختصاصی شل بارگذاری فوق‌سریع قبل از لود جاوااسکریپت */
+      body {
+        margin: 0;
+        background-color: #08080a;
+        color: #e4e4e7;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Vazirmatn', 'Vazir', 'IRANSans', Tahoma, 'Segoe UI', sans-serif;
+        -webkit-tap-highlight-color: transparent;
+      }
+      #fast-preloader {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        padding: 24px;
+        text-align: center;
+        background: radial-gradient(circle at 50% 20%, rgba(212, 175, 55, 0.12) 0%, rgba(8, 8, 10, 1) 70%);
+      }
+      .preloader-glow-ring {
+        position: relative;
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        border: 2px solid rgba(212, 175, 55, 0.2);
+        border-top-color: #f59e0b;
+        animation: preloader-spin 0.9s linear infinite;
+        box-shadow: 0 0 25px rgba(245, 158, 11, 0.25);
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .preloader-icon {
+        font-size: 32px;
+        animation: preloader-pulse 1.5s ease-in-out infinite;
+      }
+      @keyframes preloader-spin {
+        to { transform: rotate(360deg); }
+      }
+      @keyframes preloader-pulse {
+        0%, 100% { transform: scale(1); opacity: 0.9; }
+        50% { transform: scale(1.1); opacity: 1; }
+      }
+      .preloader-title {
+        font-size: 20px;
+        font-weight: 900;
+        color: #facc15;
+        letter-spacing: -0.5px;
+        margin-bottom: 6px;
+        text-shadow: 0 2px 10px rgba(250, 204, 21, 0.3);
+      }
+      .preloader-sub {
+        font-size: 13px;
+        color: #a1a1aa;
+        margin-bottom: 16px;
+      }
+      .preloader-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 14px;
+        border-radius: 9999px;
+        background: rgba(245, 158, 11, 0.12);
+        border: 1px solid rgba(245, 158, 11, 0.3);
+        color: #fcd34d;
+        font-size: 11px;
+        font-weight: 600;
+      }
+    </style>
   </head>
-  <body class="bg-[#08080a] text-zinc-200 selection:bg-yellow-500 selection:text-black font-sans">
-    <div id="root"></div>
+  <body class="bg-[#08080a] text-zinc-200 selection:bg-yellow-500 selection:text-black">
+    <div id="root">
+      <!-- لودر فوق‌سریع فوری (۰ میلی‌ثانیه): به محض باز شدن کاربر بلافاصله برندینگ لوکس کافه را می‌بیند -->
+      <div id="fast-preloader" dir="rtl">
+        <div class="preloader-glow-ring">
+          <span class="preloader-icon">☕</span>
+        </div>
+        <div class="preloader-title">کافه و کافی‌شاپ خودمونی VIP</div>
+        <div class="preloader-sub">منوی آنلاین اختصاصی و بار سرد، گرم و قلیان</div>
+        <div class="preloader-badge">
+          <span>⚡</span>
+          <span>در حال بارگذاری سریع و بهینه منو...</span>
+        </div>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

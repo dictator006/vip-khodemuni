@@ -41,6 +41,29 @@ import {
 // تصویر بک‌آپ باکیفیت برداری SVG در صورت قطعی اینترنت بین‌الملل یا مسدود بودن هاست‌های عکس
 const FALLBACK_MENU_IMAGE = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="600" height="400" viewBox="0 0 600 400"><defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="%2318181b"/><stop offset="50%" stop-color="%2309090b"/><stop offset="100%" stop-color="%2327272a"/></linearGradient></defs><rect width="600" height="400" fill="url(%23g)"/><circle cx="300" cy="170" r="65" fill="%23eab308" opacity="0.15"/><path d="M280 190c0 14 10 25 20 25s20-11 20-25h-40zm44-22h-48v-8h48v8zm-3 28h-42c-3 0-5-2-5-5v-3h52v3c0 3-2 5-5 5z" fill="%23f59e0b"/><text x="300" y="270" font-family="system-ui, sans-serif" font-size="20" font-weight="bold" fill="%23fef08a" text-anchor="middle">کافه خودمونی VIP</text><text x="300" y="300" font-family="system-ui, sans-serif" font-size="13" fill="%23a1a1aa" text-anchor="middle">سرویس باکیفیت و اختصاصی</text></svg>`;
 
+// تابع بهینه‌ساز فوق‌سریع تصاویر برای بارگذاری برق‌آسا در اینترنت و موبایل
+export function getOptimizedImageUrl(url: string, width = 380): string {
+  if (!url) return FALLBACK_MENU_IMAGE;
+  if (url.includes('images.unsplash.com')) {
+    let opt = url;
+    if (opt.includes('w=')) {
+      opt = opt.replace(/w=\d+/, `w=${width}`);
+    } else {
+      opt += `&w=${width}`;
+    }
+    if (opt.includes('q=')) {
+      opt = opt.replace(/q=\d+/, 'q=70');
+    } else {
+      opt += '&q=70';
+    }
+    if (!opt.includes('auto=format')) {
+      opt += '&auto=format';
+    }
+    return opt;
+  }
+  return url;
+}
+
 export type CategoryKey = 
   | 'all'
   | 'hookah-service'
@@ -821,9 +844,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ item, index, isAdmin, onOpenD
       {/* تصویر متناسب با نمای ۲ ستونی */}
       <div className="relative w-full h-32 sm:h-52 rounded-xl sm:rounded-2xl overflow-hidden mb-3 sm:mb-5 bg-zinc-950/60 shadow-md">
         <img
-          src={item.image}
+          src={getOptimizedImageUrl(item.image, 380)}
           alt={item.name}
-          loading="lazy"
+          loading={index < 4 ? 'eager' : 'lazy'}
           decoding="async"
           onError={(e) => {
             e.currentTarget.onerror = null;
@@ -1083,6 +1106,17 @@ export default function App() {
       return matchesCategory && matchesSub && matchesSearch;
     });
   }, [items, activeCategory, subFilter, availableSubCategories, searchQuery]);
+
+  // کنترل تعداد آیتم‌های نمایش‌یافته برای سرعت لود فوری و بدون افت فریم
+  const [visibleCount, setVisibleCount] = useState<number>(24);
+
+  useEffect(() => {
+    setVisibleCount(24);
+  }, [activeCategory, subFilter, searchQuery]);
+
+  const displayedItems = useMemo(() => {
+    return filteredItems.slice(0, visibleCount);
+  }, [filteredItems, visibleCount]);
 
   // پربازدیدترین آیتم در آمار واقعی (بر اساس کلیک و باز شدن کارت توسط مشتریان)
   const mostViewedItem = useMemo(() => {
@@ -1457,9 +1491,9 @@ export default function App() {
         {/* شبکه محصولات: دو ستونی در موبایل و سه ستونی در تبلت/دسکتاپ با انیمیشن ملایم fade-in و slide-up */}
         <div
           key={`${activeCategory}-${subFilter}-${searchQuery}`}
-          className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6 mb-20"
+          className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-6 mb-8"
         >
-          {filteredItems.map((item, idx) => (
+          {displayedItems.map((item, idx) => (
             <ProductCard
               key={item.id}
               item={item}
@@ -1471,6 +1505,29 @@ export default function App() {
             />
           ))}
         </div>
+
+        {/* دکمه بارگذاری دسته‌ای برای حفظ سرعت برق‌آسا و عدم هنگی مرورگر */}
+        {filteredItems.length > visibleCount && (
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-20 animate-in fade-in">
+            <button
+              type="button"
+              onClick={() => setVisibleCount((prev) => prev + 24)}
+              className="w-full sm:w-auto px-6 py-3 rounded-2xl bg-zinc-900/90 hover:bg-zinc-800 border border-yellow-500/40 text-yellow-400 font-bold text-xs sm:text-sm transition flex items-center justify-center gap-2 cursor-pointer shadow-lg hover:border-yellow-400 active:scale-95"
+            >
+              <span>مشاهده محصولات بیشتر</span>
+              <span className="text-[11px] px-2 py-0.5 rounded-full bg-yellow-500/10 text-yellow-300 border border-yellow-500/20 font-mono">
+                {formatNumber(filteredItems.length - visibleCount)}+ باقی‌مانده
+              </span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setVisibleCount(filteredItems.length)}
+              className="w-full sm:w-auto px-5 py-3 rounded-2xl bg-zinc-950/80 hover:bg-zinc-900 border border-zinc-800 text-zinc-400 hover:text-zinc-200 font-medium text-xs transition cursor-pointer"
+            >
+              نمایش یکجای همه محصولات ({formatNumber(filteredItems.length)})
+            </button>
+          </div>
+        )}
 
         {/* وضعیت خالی بودن سرچ */}
         {filteredItems.length === 0 && (
@@ -1825,7 +1882,7 @@ export default function App() {
             {/* تصویر بزرگ محصول با انعکاس نور */}
             <div className="relative w-full h-60 sm:h-72 rounded-2xl overflow-hidden mb-5 bg-zinc-950 shadow-2xl">
               <img
-                src={selectedProduct.image}
+                src={getOptimizedImageUrl(selectedProduct.image, 600)}
                 alt={selectedProduct.name}
                 decoding="async"
                 onError={(e) => {
